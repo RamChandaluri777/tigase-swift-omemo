@@ -1,0 +1,34 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "libsignal",
+        "repositoryURL": "https://github.com/tigase/libsignal",
+        "state": {
+          "branch": null,
+          "revision": "d23d5af0d729cf66b93cea607f3f84a34b9fddfd",
+          "version": "1.0.0"
+        }
+      },
+      {
+        "package": "tigase-logging.swift",
+        "repositoryURL": "https://github.com/tigase/tigase-logging.swift",
+        "state": {
+          "branch": "master",
+          "revision": "382e2e85e64f8b1e3fcb71a996a030bf1b62ecb3",
+          "version": null
+        }
+      },
+      {
+        "package": "TigaseSwift",
+        "repositoryURL": "https://github.com/RamChandaluri777/tigase-swift.git",
+        "state": {
+          "branch": "master",
+          "revision": "3066c0412bad91246291866dae10a4d6a7658c51",
+          "version": null
+        }
+      }
+    ]
+  },
+  "version": 1
+}
