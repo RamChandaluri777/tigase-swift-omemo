@@ -33,8 +33,10 @@ open class OMEMOModule: AbstractPEPModule, XmppModule {
     
     public static let ID = "omemo";
     public static let IDENTIFIER = XmppModuleIdentifier<OMEMOModule>();
-    public static let XMLNS = "eu.siacs.conversations.axolotl";
-    public static let DEVICES_LIST_NODE = "eu.siacs.conversations.axolotl.devicelist";
+    public static let XMLNS = "in.securesignal.secure.service"
+       // "eu.siacs.conversations.axolotl";
+    public static let DEVICES_LIST_NODE = "in.securesignal.secure.service.devicelist"
+        //"eu.siacs.conversations.axolotl.devicelist";
     
     public let id: String = ID;
 
@@ -119,8 +121,8 @@ open class OMEMOModule: AbstractPEPModule, XmppModule {
         guard let context = context else {
             return .failure(.unknown);
         }
-
-        guard let encryptedEl = message.findChild(name: "encrypted", xmlns: OMEMOModule.XMLNS) else {
+//"encrypted"
+        guard let encryptedEl = message.findChild(name: "label", xmlns: OMEMOModule.XMLNS) else {
             return .failure(SignalError.notEncrypted);
         }
         
@@ -136,7 +138,7 @@ open class OMEMOModule: AbstractPEPModule, XmppModule {
             guard context.userBareJid != from || sid != signalContext.storage.identityKeyStore.localRegistrationId() else {
                 return .failure(.duplicateMessage);
             }
-            guard encryptedEl.findChild(name: "payload") != nil else {
+            guard encryptedEl.findChild(name: "message-body") != nil else {
                 return .failure(.duplicateMessage);
             }
             return .failure(.invalidMessage);
@@ -177,7 +179,7 @@ open class OMEMOModule: AbstractPEPModule, XmppModule {
                     return .failure(.unknown);
                 }
             } else {
-                guard encryptedEl.findChild(name: "payload") != nil else {
+                guard encryptedEl.findChild(name: "message-body") != nil else {
                     return .failure(.duplicateMessage);
                 }
                 return .failure(.invalidMessage);
@@ -207,7 +209,7 @@ open class OMEMOModule: AbstractPEPModule, XmppModule {
                 return .failure(.invalidArgument);
             }
             
-            guard let payloadValue = encryptedEl.findChild(name: "payload")?.value, let payload = Data(base64Encoded: payloadValue) else {
+            guard let payloadValue = encryptedEl.findChild(name: "message-body")?.value, let payload = Data(base64Encoded: payloadValue) else {
                 return .successTransportKey(decodedKey, iv: iv);
             }
 
@@ -261,7 +263,7 @@ open class OMEMOModule: AbstractPEPModule, XmppModule {
                     switch result {
                     case .success(let items):
                         print("got published devices from:", jid, ", ", items.items.first as Any);
-                        if let listEl = items.items.first?.payload, listEl.name == "list" && listEl.xmlns == "eu.siacs.conversations.axolotl" {
+                        if let listEl = items.items.first?.payload, listEl.name == "list" && listEl.xmlns == "in.securesignal.secure.service" {
                             let knownActiveDevices: [Int32] = listEl.mapChildren(transform: { $0.getAttribute("id") }).compactMap({ Int32($0) });
                                 
                             
@@ -434,8 +436,8 @@ open class OMEMOModule: AbstractPEPModule, XmppModule {
         var combinedKey = key;
         combinedKey.append(tag);
         
-        let encryptedEl = Element(name: "encrypted", xmlns: OMEMOModule.XMLNS);
-        encryptedEl.addChild(Element(name: "payload", cdata: encryptedBody.base64EncodedString()));
+        let encryptedEl = Element(name: "label", xmlns: OMEMOModule.XMLNS);
+        encryptedEl.addChild(Element(name: "message-body", cdata: encryptedBody.base64EncodedString()));
         
         let header = Element(name: "header");
         header.setAttribute("sid", value: String(signalContext.storage.identityKeyStore.localRegistrationId()));
@@ -517,8 +519,8 @@ open class OMEMOModule: AbstractPEPModule, XmppModule {
         let pubsubModule = context.module(.pubsub);
         var listEl = input;
 
-        if listEl?.name != "list" || listEl?.xmlns != "eu.siacs.conversations.axolotl" {
-            listEl = Element(name: "list", xmlns: "eu.siacs.conversations.axolotl");
+        if listEl?.name != "list" || listEl?.xmlns != "in.securesignal.secure.service" {
+            listEl = Element(name: "list", xmlns: "in.securesignal.secure.service");
         }
         
         
@@ -835,7 +837,7 @@ open class OMEMOModule: AbstractPEPModule, XmppModule {
     }
     
     func bundleNode(for deviceId: UInt32) -> String {
-        return "eu.siacs.conversations.axolotl.bundles:\(deviceId)";
+        return "in.securesignal.secure.service.bundles:\(deviceId)";
     }
     
     open class OMEMOBundle {
