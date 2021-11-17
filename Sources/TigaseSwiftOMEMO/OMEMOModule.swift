@@ -121,7 +121,7 @@ open class OMEMOModule: AbstractPEPModule, XmppModule {
         guard let context = context else {
             return .failure(.unknown);
         }
-//"encrypted"
+//"encrypted" //
         guard let encryptedEl = message.findChild(name: "label", xmlns: OMEMOModule.XMLNS) else {
             return .failure(SignalError.notEncrypted);
         }
